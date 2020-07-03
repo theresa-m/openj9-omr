@@ -558,7 +558,7 @@ MM_CompactScheme::compact(MM_EnvironmentBase *envBase, bool rebuildMarkBits, boo
 	 *  o the compaction is aggressive. We use a single sub area per segment to avoid potentially having
 	 *    multiple holes created per segment, thereby fragmenting the space. This will result in
 	 *    singlethreaded compaction per segment, and so should only be done in extreme OOM situations.
-	 *  o no slave GC threads
+	 *  o no worker GC threads
 	 */
 	if (aggressive || (1 == env->_currentTask->getThreadCount())) {
 		singleThreaded = true;

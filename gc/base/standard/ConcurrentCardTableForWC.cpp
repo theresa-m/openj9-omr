@@ -166,7 +166,7 @@ MM_ConcurrentCardTableForWC::prepareCardsForCleaning(MM_EnvironmentBase *env)
 		return;
 	}	
 	
-	/* Now get assistance from all the gc slave threads to prepare the dirty cards
+	/* Now get assistance from all the gc worker threads to prepare the dirty cards
 	 * in the card table for cleaning by marking dirty cards as safe to clean.
 	 */ 
 	 
@@ -416,7 +416,7 @@ MM_ConcurrentCardTableForWC::initializeFinalCardCleaning(MM_EnvironmentBase *env
 	if (_cardTablePreparedForCleaning ) {
 		/* Yes..So we must reverse any cards that got prepared */
 		if (_currentCleaningRange < _lastCleaningRange) {
-			/* Get assistance from all gc slave threads to do the work */ 
+			/* Get assistance from all gc worker threads to do the work */ 
 			MM_ConcurrentPrepareCardTableTask prepareCardTableTask(env, 
 																  _dispatcher,
 																  this,

@@ -66,7 +66,7 @@ public:
 
 	/**
 	 * Single call cleanup routine for tasks invoked by the master thread after the task has been dispatched and all
-	 * slave threads (if any) have been quiesced.
+	 * worker threads (if any) have been quiesced.
 	 */
 	virtual void masterCleanup(MM_EnvironmentBase *env);
 

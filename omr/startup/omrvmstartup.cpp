@@ -438,7 +438,7 @@ OMR_Initialize_VM(OMR_VM **omrVMSlot, OMR_VMThread **omrVMThreadSlot, void *lang
 	gcOmrInitializeTrace(vmThread);
 	rc = OMR_GC_InitializeDispatcherThreads(vmThread);
 	if (OMR_ERROR_NONE != rc) {
-		omrtty_printf("Failed to launch GC slave threads, rc=%d.\n", rc);
+		omrtty_printf("Failed to launch GC worker threads, rc=%d.\n", rc);
 		goto failed;
 	}
 #endif /* OMR_GC */
@@ -476,7 +476,7 @@ OMR_Shutdown_VM(OMR_VM *omrVM, OMR_VMThread *omrVMThread)
 #if defined(OMR_GC)
 		rc = OMR_GC_ShutdownDispatcherThreads(omrVMThread);
 		if (OMR_ERROR_NONE != rc) {
-			omrtty_printf("Failed to shutdown GC slave threads, rc=%d.\n", rc);
+			omrtty_printf("Failed to shutdown GC worker threads, rc=%d.\n", rc);
 		}
 
 		rc = OMR_GC_ShutdownCollector(omrVMThread);

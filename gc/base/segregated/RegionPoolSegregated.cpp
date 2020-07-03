@@ -325,7 +325,7 @@ MM_RegionPoolSegregated::allocateFromRegionPool(MM_EnvironmentBase *env, uintptr
 void
 MM_RegionPoolSegregated::joinBucketListsForSplitIndex(MM_EnvironmentBase *env)
 {
-	uintptr_t splitIndex = env->getSlaveID() % _splitAvailableListSplitCount;
+	uintptr_t splitIndex = env->getWorkerID() % _splitAvailableListSplitCount;
 	for (int32_t sizeClass = OMR_SIZECLASSES_MIN_SMALL; sizeClass <= OMR_SIZECLASSES_MAX_SMALL; sizeClass++) {
 		MM_LockingHeapRegionQueue *primaryQueue = &(_smallAvailableRegions[sizeClass][PRIMARY_BUCKET])[splitIndex];
 		for (int32_t i=1; i<NUM_DEFRAG_BUCKETS; i++) {

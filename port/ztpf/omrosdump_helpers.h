@@ -97,7 +97,7 @@ typedef struct {
 #define dibAddr(p) (p->dibPtr)
 /* Values for args.flags follow  */
 #define  J9TPF_NO_PORT_LIBRARY		0x01	 /* No port library available		*/
-#define  J9TPF_SLAVE_OUTSTANDING	0x02	 /* The pthread spawned to			*/
+#define  J9TPF_WORKER_OUTSTANDING	0x02	 /* The pthread spawned to			*/
 											 /* ztpfBuildCoreFile() was launched*/
 											 /* and we don't know if it's yet	*/
 											 /* completed.						*/

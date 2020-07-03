@@ -501,7 +501,7 @@ MM_SweepSchemeSegregated::incrementalSweepSmall(MM_EnvironmentBase *env)
 	MM_GCExtensionsBase *ext = env->getExtensions();
 	bool shouldUpdateOccupancy = ext->nonDeterministicSweep;
 	MM_RegionPoolSegregated *regionPool = _memoryPool->getRegionPool();
-	uintptr_t splitIndex = env->getSlaveID() % (regionPool->getSplitAvailableListSplitCount());
+	uintptr_t splitIndex = env->getWorkerID() % (regionPool->getSplitAvailableListSplitCount());
 
 	/* 
 	 * Iterate through the regions so that each region is processed exactly once.
