@@ -122,7 +122,7 @@ private:
 	MM_HeapRegionManager *_regionManager;
 
 #if defined(OMR_GC_CONCURRENT_SCAVENGER)
-	MM_MasterGCThread _masterGCThread; /**< An object which manages the state of the master GC thread */
+	MM_MainGCThread _masterGCThread; /**< An object which manages the state of the master GC thread */
 	
 	volatile enum ConcurrentState {
 		concurrent_phase_idle,
