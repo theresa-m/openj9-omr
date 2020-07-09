@@ -39,7 +39,7 @@ class MM_RememberedSetCardBucket;
  * Multi-threaded mark and sweep global collector.
  * @ingroup GC_Modron_Standard
  */
-class MM_MasterGCThread : public MM_BaseNonVirtual
+class MM_MainGCThread : public MM_BaseNonVirtual
 {
 /*
  * Data members
@@ -115,7 +115,7 @@ public:
 	 */
 	bool isGarbageCollectInProgress() { return STATE_GC_REQUESTED != _masterThreadState; }
 	
-	MM_MasterGCThread(MM_EnvironmentBase *env);
+	MM_MainGCThread(MM_EnvironmentBase *env);
 protected:
 private:
 	/**
