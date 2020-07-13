@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2017 IBM Corp. and others
+ * Copyright (c) 2017, 2020 IBM Corp. and others
  *
  * This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License 2.0 which accompanies this
@@ -73,7 +73,7 @@ public:
 	}
 
 	/**
-	 * This method is called on the master garbage collection thread at the beginning of the marking
+	 * This method is called on the main garbage collection thread at the beginning of the marking
 	 * phase of a global GC cycle. Any language-specific setup that is required to support marking
 	 * can be performed here.
 	 *
@@ -81,10 +81,10 @@ public:
 	 *
 	 * @param env The environment for the calling thread
 	 */
-	MMINLINE void masterSetupForGC(MM_EnvironmentBase *env) { }
+	MMINLINE void mainSetupForGC(MM_EnvironmentBase *env) { }
 
 	/**
-	 * This method is called on the master garbage collection thread at the beginning of the marking
+	 * This method is called on the main garbage collection thread at the beginning of the marking
 	 * phase preceding a heap walk. Any language-specific setup that is required to prepare for the
 	 * heap walk can be performed here.
 	 *
@@ -92,10 +92,10 @@ public:
 	 *
 	 * @param env the current environment
 	 */
-	MMINLINE void masterSetupForWalk(MM_EnvironmentBase *env) { }
+	MMINLINE void mainSetupForWalk(MM_EnvironmentBase *env) { }
 
 	/**
-	 * This method is called on the master garbage collection thread at the end of the marking phase
+	 * This method is called on the main garbage collection thread at the end of the marking phase
 	 * for a global GC cycle. Any language-specific finalization that is required to support marking
 	 * can be performed here.
 	 *
@@ -103,7 +103,7 @@ public:
 	 *
 	 * @param env the current environment
 	 */
-	void masterCleanupAfterGC(MM_EnvironmentBase *env);
+	void mainCleanupAfterGC(MM_EnvironmentBase *env);
 
 	/**
 	 * This method is called on each worker thread participating in garbage collection at the beginning

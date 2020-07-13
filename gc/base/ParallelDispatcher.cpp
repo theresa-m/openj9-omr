@@ -83,9 +83,9 @@ dispatcher_thread_proc2(OMRPortLibrary* portLib, void *info)
 	oldVMState = env->pushVMstate(OMRVMSTATE_GC_DISPATCHER_IDLE);
 
 	/* Begin running the thread */
-	if (env->isMasterThread()) {
-		env->setThreadType(GC_MASTER_THREAD);
-		dispatcher->masterEntryPoint(env);
+	if (env->isMainThread()) {
+		env->setThreadType(GC_MAIN_THREAD);
+		dispatcher->mainEntryPoint(env);
 		env->setThreadType(GC_WORKER_THREAD);
 	} else {
 		env->setThreadType(GC_WORKER_THREAD);
@@ -178,11 +178,11 @@ MM_ParallelDispatcher::workerEntryPoint(MM_EnvironmentBase *env)
 }
 
 void
-MM_ParallelDispatcher::masterEntryPoint(MM_EnvironmentBase *env)
+MM_ParallelDispatcher::mainEntryPoint(MM_EnvironmentBase *env)
 {
 	/* The default implementation is to not start a separate
-	 * master thread, but any subclasses that override 
-	 * useSeparateMasterThread() must also override this method.
+	 * main thread, but any subclasses that override 
+	 * useSeparateMainThread() must also override this method.
 	 */
 	assume0(0);
 }
@@ -291,8 +291,8 @@ MM_ParallelDispatcher::startUpThreads()
 
 	omrthread_monitor_enter(_dispatcherMonitor);
 
-	/* We may be starting the master thread at this point too */
-	workerThreadCount = useSeparateMasterThread() ? 0 : 1;
+	/* We may be starting the main thread at this point too */
+	workerThreadCount = useSeparateMainThread() ? 0 : 1;
 	
 	while (workerThreadCount < _threadCountMaximum) {
 		workerInfo.workerFlags = 0;
@@ -365,7 +365,7 @@ MM_ParallelDispatcher::shutDownThreads()
 
 	/* Set the active parallel thread count to 1 */
 	/* This allows worker threads to cause a GC during their detach, */
-	/* making them the master in a single threaded GC */
+	/* making them the main in a single threaded GC */
 	_threadCount = 1;
 
 	wakeUpThreads(_threadShutdownCount);
