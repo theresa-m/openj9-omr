@@ -24,51 +24,51 @@
 
 namespace OMR
 {
-    TEST(TestCAE, Simple8BitSuccess)
-    {
-        uint8_t value = 0x42;
-        uint8_t oldVal = 0x42;
-        uint8_t newVal = 0x60;
-        
-        uint8_t result = VM_AtomicSupport::lockCompareExchangeU8(&value, oldVal, newVal);
-        
-        EXPECT_EQ(result, 0x42);
-        EXPECT_EQ(value, 0x60);
-    }
+	TEST(TestCAE, Simple8BitSuccess)
+	{
+		volatile uint8_t value = 0x42;
+		uint8_t oldVal = 0x42;
+		uint8_t newVal = 0x60;
 
-    TEST(TestCAE, Simple8BitFailure)
-    {
-        uint8_t value = 0x42;
-        uint8_t wrongOldVal = 0x50;
-        uint8_t newVal = 0x60;
-        
-        uint8_t result = VM_AtomicSupport::lockCompareExchangeU8(&value, wrongOldVal, newVal);
-        
-        EXPECT_EQ(result, 0x42);
-        EXPECT_EQ(value, 0x42);
-    }
+		uint8_t result = VM_AtomicSupport::lockCompareExchangeU8(&value, oldVal, newVal);
 
-    TEST(TestCAE, Simple16BitSuccess)
-    {
-        uint16_t value = 0x1234;
-        uint16_t oldVal = 0x1234;
-        uint16_t newVal = 0x5678;
-        
-        uint16_t result = VM_AtomicSupport::lockCompareExchangeU16(&value, oldVal, newVal);
-        
-        EXPECT_EQ(result, 0x1234);
-        EXPECT_EQ(value, 0x5678);
-    }
+		EXPECT_EQ(result, 0x42);
+		EXPECT_EQ(value, 0x60);
+	}
 
-    TEST(TestCAE, Simple16BitFailure)
-    {
-        uint16_t value = 0x1234;
-        uint16_t wrongOldVal = 0x9999;
-        uint16_t newVal = 0x5678;
-        
-        uint16_t result = VM_AtomicSupport::lockCompareExchangeU16(&value, wrongOldVal, newVal);
-        
-        EXPECT_EQ(result, 0x1234);
-        EXPECT_EQ(value, 0x1234);
-    }
+	TEST(TestCAE, Simple8BitFailure)
+	{
+		volatile uint8_t value = 0x42;
+		uint8_t wrongOldVal = 0x50;
+		uint8_t newVal = 0x60;
+
+		uint8_t result = VM_AtomicSupport::lockCompareExchangeU8(&value, wrongOldVal, newVal);
+
+		EXPECT_EQ(result, 0x42);
+		EXPECT_EQ(value, 0x42);
+	}
+
+	TEST(TestCAE, Simple16BitSuccess)
+	{
+		volatile uint16_t value = 0x1234;
+		uint16_t oldVal = 0x1234;
+		uint16_t newVal = 0x5678;
+
+		uint16_t result = VM_AtomicSupport::lockCompareExchangeU16(&value, oldVal, newVal);
+
+		EXPECT_EQ(result, 0x1234);
+		EXPECT_EQ(value, 0x5678);
+	}
+
+	TEST(TestCAE, Simple16BitFailure)
+	{
+		volatile uint16_t value = 0x1234;
+		uint16_t wrongOldVal = 0x9999;
+		uint16_t newVal = 0x5678;
+
+		uint16_t result = VM_AtomicSupport::lockCompareExchangeU16(&value, wrongOldVal, newVal);
+
+		EXPECT_EQ(result, 0x1234);
+		EXPECT_EQ(value, 0x1234);
+	}
 }
