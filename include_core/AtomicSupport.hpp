@@ -385,7 +385,7 @@ public:
 		uintptr_t addressValue,
 		uint32_t oldValue,
 		uint32_t newValue,
-		size_t offsetMask,
+		uintptr_t offsetMask,
 		uint32_t valueMask)
 	{
 		uint32_t result = 0;
@@ -465,16 +465,16 @@ public:
 #if (__xlC__ >= 0x1001) /* XLC >= 16.1.0 */
 		atomic_compare_exchange_strong(address, &oldValue, newValue);
 		return oldValue;
-#else /* ((__xlC__ >= 0x1001) || defined(__open_xl__)) */
+#else /* (__xlC__ >= 0x1001) */
 		return __sync_val_compare_and_swap(address, oldValue, newValue);
-#endif /* ((__xlC__ >= 0x1001) || defined(__open_xl__)) */
+#endif /* (__xlC__ >= 0x1001) */
 #elif defined(__GNUC__) /* defined(__xlC__) || defined(__open_xl__) */
 #if defined(__riscv)
 		return lockCompareAndExchangeU8Helper(address, oldValue, newValue);
-#else  /* defined(__riscv) */
+#else /* defined(__riscv) */
 		/* Assume GCC >= 4.2. */
 		return __sync_val_compare_and_swap(address, oldValue, newValue);
-#endif  /* defined(__riscv) */
+#endif /* defined(__riscv) */
 #elif defined(_MSC_VER) /* defined(__GNUC__) */
 		return (uint8_t)_InterlockedCompareExchange8((volatile char *)address, (char)newValue, (char)oldValue);
 #else /* defined(_MSC_VER) */
@@ -487,15 +487,15 @@ public:
 	{
 #if defined(ATOMIC_SUPPORT_STUB)
 		return 0;
-#elif defined(OMRZTPF) || defined(J9ZOS390)  /* defined(ATOMIC_SUPPORT_STUB) */
+#elif defined(OMRZTPF) || defined(J9ZOS390) /* defined(ATOMIC_SUPPORT_STUB) */
 		return lockCompareAndExchangeU16Helper(address, oldValue, newValue);
 #elif defined(__xlC__) || defined(__open_xl__) /* defined(OMRZTPF) || defined(J9ZOS390) */
 #if (__xlC__ >= 0x1001) /* XLC >= 16.1.0 */
 		atomic_compare_exchange_strong(address, &oldValue, newValue);
 		return oldValue;
-#else /* ((__xlC__ >= 0x1001) || defined(__open_xl__)) */
+#else /* (__xlC__ >= 0x1001) */
 		return __sync_val_compare_and_swap(address, oldValue, newValue);
-#endif /* ((__xlC__ >= 0x1001) || defined(__open_xl__)) */
+#endif /* (__xlC__ >= 0x1001) */
 #elif defined(__GNUC__) /* defined(__xlC__) || defined(__open_xl__) */
 #if defined(__riscv)
 		return lockCompareAndExchangeU16Helper(address, oldValue, newValue);
