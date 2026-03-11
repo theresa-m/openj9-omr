@@ -461,13 +461,11 @@ public:
 		return 0;
 #elif defined(OMRZTPF) || defined(J9ZOS390) /* defined(ATOMIC_SUPPORT_STUB) */
 		return lockCompareAndExchangeU8Helper(address, oldValue, newValue);
-#elif defined(__xlC__) || defined(__open_xl__) /* defined(OMRZTPF) || defined(J9ZOS390) */
-#if (__xlC__ >= 0x1001) /* XLC >= 16.1.0 */
+#elif defined(__xlC__) && (__xlC__ >= 0x1001) /* XLC >= 16.1.0 */ /* defined(OMRZTPF) || defined(J9ZOS390) */
 		atomic_compare_exchange_strong(address, &oldValue, newValue);
 		return oldValue;
-#else /* (__xlC__ >= 0x1001) */
+#elif defined(__xlC__) || defined(__open_xl__) /* defined(__xlC__) && (__xlC__ >= 0x1001) */
 		return __sync_val_compare_and_swap(address, oldValue, newValue);
-#endif /* (__xlC__ >= 0x1001) */
 #elif defined(__GNUC__) /* defined(__xlC__) || defined(__open_xl__) */
 #if defined(__riscv)
 		return lockCompareAndExchangeU8Helper(address, oldValue, newValue);
@@ -489,13 +487,11 @@ public:
 		return 0;
 #elif defined(OMRZTPF) || defined(J9ZOS390) /* defined(ATOMIC_SUPPORT_STUB) */
 		return lockCompareAndExchangeU16Helper(address, oldValue, newValue);
-#elif defined(__xlC__) || defined(__open_xl__) /* defined(OMRZTPF) || defined(J9ZOS390) */
-#if (__xlC__ >= 0x1001) /* XLC >= 16.1.0 */
+#elif defined(__xlC__) && (__xlC__ >= 0x1001) /* XLC >= 16.1.0 */ /* defined(OMRZTPF) || defined(J9ZOS390) */
 		atomic_compare_exchange_strong(address, &oldValue, newValue);
 		return oldValue;
-#else /* (__xlC__ >= 0x1001) */
+#elif defined(__xlC__) || defined(__open_xl__) /* defined(__xlC__) && (__xlC__ >= 0x1001) */
 		return __sync_val_compare_and_swap(address, oldValue, newValue);
-#endif /* (__xlC__ >= 0x1001) */
 #elif defined(__GNUC__) /* defined(__xlC__) || defined(__open_xl__) */
 #if defined(__riscv)
 		return lockCompareAndExchangeU16Helper(address, oldValue, newValue);
