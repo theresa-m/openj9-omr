@@ -146,6 +146,82 @@
  */
 class VM_AtomicSupport
 {
+private:
+#if defined(OMRZTPF) || defined(J9ZOS390) || defined(__riscv)
+	VMINLINE static uint32_t
+	lockCompareAndExchangeSmallTypeHelper(
+		uintptr_t addressValue,
+		uint32_t oldValue,
+		uint32_t newValue,
+		uintptr_t offsetMask,
+		uint32_t valueMask)
+	{
+		uint32_t result = 0;
+
+		/* Calculate offset within 32-bits, accounting for endianness. */
+#if defined(OMR_ENV_LITTLE_ENDIAN)
+		uintptr_t offset = addressValue & offsetMask;
+#else /* defined(OMR_ENV_LITTLE_ENDIAN) */
+		uintptr_t offset = offsetMask - (addressValue & offsetMask);
+#endif /* defined(OMR_ENV_LITTLE_ENDIAN) */
+
+		/* Calculate the 32-bit aligned address containing the small type destination. */
+		uintptr_t addressValue32Aligned = addressValue & ~offsetMask;
+		volatile uint32_t *address = (volatile uint32_t *)addressValue32Aligned;
+
+		uint32_t shiftAmount = offset * 8;
+		uint32_t valueMaskShifted = valueMask << shiftAmount;
+
+		for (;;) {
+			/* Get the value contained at this address to use in CAS call. */
+			uint32_t existingValue = *address;
+
+			/* Compare oldValue with corresponding bits. */
+			uint32_t oldValueShifted = oldValue << shiftAmount;
+			uint32_t existingValueMasked = existingValue & valueMaskShifted;
+			if (oldValueShifted != existingValueMasked) {
+				/* Fail: the compare value has changed. Return the value that was found. */
+				result = existingValueMasked >> shiftAmount;
+				break;
+			}
+
+			uint32_t newValueShifted = newValue << shiftAmount;
+			uint32_t newValueWithExisting = (existingValue & ~valueMaskShifted) | newValueShifted;
+			uint32_t currentValue = lockCompareExchangeU32(address, existingValue, newValueWithExisting);
+
+			if (currentValue != existingValue) {
+				/* If bit to be swapped was the one that changed, fail. Otherwise try again. */
+				currentValue &= valueMaskShifted;
+				if (currentValue != oldValueShifted) {
+					result = currentValue >> shiftAmount;
+					break;
+				}
+			} else {
+				/* CAS succeeded, return the old value. */
+				result = oldValue;
+				break;
+			}
+		}
+		return result;
+	}
+
+	VMINLINE static uint8_t
+	lockCompareAndExchangeU8Helper(volatile uint8_t *address, uint8_t oldValue, uint8_t newValue)
+	{
+		size_t U8_OFFSET_MASK = 0x3;
+		uint32_t U8_VALUE_MASK = 0xFF;
+		return lockCompareAndExchangeSmallTypeHelper((uintptr_t)address, oldValue, newValue, U8_OFFSET_MASK, U8_VALUE_MASK);
+	}
+
+	VMINLINE static uint16_t
+	lockCompareAndExchangeU16Helper(volatile uint16_t *address, uint16_t oldValue, uint16_t newValue)
+	{
+		size_t U16_OFFSET_MASK = 0x1;
+		uint32_t U16_VALUE_MASK = 0xFFFF;
+		return lockCompareAndExchangeSmallTypeHelper((uintptr_t)address, oldValue, newValue, U16_OFFSET_MASK, U16_VALUE_MASK);
+	}
+#endif /* defined(OMRZTPF) || defined(J9ZOS390)  || defined(__riscv) */
+
 public:
 
 	/**
@@ -378,81 +454,6 @@ public:
 #endif /* defined(OMRZPTF) */
 #endif /* defined(ATOMIC_SUPPORT_STUB) */
 	}
-
-#if defined(OMRZTPF) || defined(J9ZOS390) || defined(__riscv)
-	VMINLINE static uint32_t
-	lockCompareAndExchangeSmallTypeHelper(
-		uintptr_t addressValue,
-		uint32_t oldValue,
-		uint32_t newValue,
-		uintptr_t offsetMask,
-		uint32_t valueMask)
-	{
-		uint32_t result = 0;
-
-		/* Calculate offset within 32-bits, accounting for endianness. */
-#if defined(OMR_ENV_LITTLE_ENDIAN)
-		uintptr_t offset = addressValue & offsetMask;
-#else /* defined(OMR_ENV_LITTLE_ENDIAN) */
-		uintptr_t offset = offsetMask - (addressValue & offsetMask);
-#endif /* defined(OMR_ENV_LITTLE_ENDIAN) */
-
-		/* Calculate the 32-bit aligned address containing the small type destination. */
-		uintptr_t addressValue32Aligned = addressValue & ~offsetMask;
-		volatile uint32_t *address = (volatile uint32_t *)addressValue32Aligned;
-
-		uint32_t shiftAmount = offset * 8;
-		uint32_t valueMaskShifted = valueMask << shiftAmount;
-
-		for (;;) {
-			/* Get the value contained at this address to use in CAS call. */
-			uint32_t existingValue = *address;
-
-			/* Compare oldValue with corresponding bits. */
-			uint32_t oldValueShifted = oldValue << shiftAmount;
-			uint32_t existingValueMasked = existingValue & valueMaskShifted;
-			if (oldValueShifted != existingValueMasked) {
-				/* Fail: the compare value has changed. Return the value that was found. */
-				result = existingValueMasked >> shiftAmount;
-				break;
-			}
-
-			uint32_t newValueShifted = newValue << shiftAmount;
-			uint32_t newValueWithExisting = (existingValue & ~valueMaskShifted) | newValueShifted;
-			uint32_t currentValue = lockCompareExchangeU32(address, existingValue, newValueWithExisting);
-
-			if (currentValue != existingValue) {
-				/* If bit to be swapped was the one that changed, fail. Otherwise try again. */
-				currentValue &= valueMaskShifted;
-				if (currentValue != oldValueShifted) {
-					result = currentValue >> shiftAmount;
-					break;
-				}
-			} else {
-				/* CAS succeeded, return the old value. */
-				result = oldValue;
-				break;
-			}
-		}
-		return result;
-	}
-
-	VMINLINE static uint8_t
-	lockCompareAndExchangeU8Helper(volatile uint8_t *address, uint8_t oldValue, uint8_t newValue)
-	{
-		size_t U8_OFFSET_MASK = 0x3;
-		uint32_t U8_VALUE_MASK = 0xFF;
-		return lockCompareAndExchangeSmallTypeHelper((uintptr_t)address, oldValue, newValue, U8_OFFSET_MASK, U8_VALUE_MASK);
-	}
-
-	VMINLINE static uint16_t
-	lockCompareAndExchangeU16Helper(volatile uint16_t *address, uint16_t oldValue, uint16_t newValue)
-	{
-		size_t U16_OFFSET_MASK = 0x1;
-		uint32_t U16_VALUE_MASK = 0xFFFF;
-		return lockCompareAndExchangeSmallTypeHelper((uintptr_t)address, oldValue, newValue, U16_OFFSET_MASK, U16_VALUE_MASK);
-	}
-#endif /* defined(OMRZTPF) || defined(J9ZOS390)  || defined(__riscv) */
 
 	VMINLINE static uint8_t
 	lockCompareExchangeU8(volatile uint8_t *address, uint8_t oldValue, uint8_t newValue)
