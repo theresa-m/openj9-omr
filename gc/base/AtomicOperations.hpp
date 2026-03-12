@@ -122,12 +122,36 @@ public:
 		VM_AtomicSupport::readBarrier();
 	}
 
+	/**
+	 * Store unsigned 8 bit value at memory location as an atomic operation.
+	 * Compare the unsigned 8 bit value at memory location pointed to by <b>address</b>.  If it is
+	 * equal to <b>oldValue</b> then update this memory location with <b>newValue</b>
+	 * else retain the <b>oldValue</b>.
+	 * 
+	 * @param address The memory location to be updated
+	 * @param oldValue The expected value at memory address
+	 * @param newValue The new value to be stored at memory address
+	 * 
+	 * @return the value at memory location <b>address</b> BEFORE the store was attempted
+	 */
 	MMINLINE_DEBUG static uint8_t
 	lockCompareExchangeU8(volatile uint8_t *address, uint8_t oldValue, uint8_t newValue)
 	{
 		return VM_AtomicSupport::lockCompareExchangeU8(address, oldValue, newValue);
 	}
 
+	/**
+	 * Store unsigned 16 bit value at memory location as an atomic operation.
+	 * Compare the unsigned 16 bit value at memory location pointed to by <b>address</b>.  If it is
+	 * equal to <b>oldValue</b> then update this memory location with <b>newValue</b>
+	 * else retain the <b>oldValue</b>.
+	 * 
+	 * @param address The memory location to be updated
+	 * @param oldValue The expected value at memory address
+	 * @param newValue The new value to be stored at memory address
+	 * 
+	 * @return the value at memory location <b>address</b> BEFORE the store was attempted
+	 */
 	MMINLINE_DEBUG static uint16_t
 	lockCompareExchangeU16(volatile uint16_t *address, uint16_t oldValue, uint16_t newValue)
 	{

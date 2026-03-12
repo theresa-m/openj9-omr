@@ -455,6 +455,19 @@ public:
 #endif /* defined(ATOMIC_SUPPORT_STUB) */
 	}
 
+	/**
+	 * Store unsigned 8 bit value at memory location as an atomic operation.
+	 * Compare the unsigned 8 bit value at memory location pointed to by <b>address</b>.  If it is
+	 * equal to <b>oldValue</b> then update this memory location with <b>newValue</b>
+	 * else retain the <b>oldValue</b>.
+	 *
+	 * @param address The memory location to be updated
+	 * @param oldValue The expected value at memory address
+	 * @param newValue The new value to be stored at memory address
+	 * @param readBeforeCAS Controls whether a pre-read occurs before the CAS attempt (default false)
+	 *
+	 * @return the value at memory location <b>address</b> BEFORE the store was attempted
+	 */
 	VMINLINE static uint8_t
 	lockCompareExchangeU8(volatile uint8_t *address, uint8_t oldValue, uint8_t newValue)
 	{
@@ -481,6 +494,19 @@ public:
 #endif /* defined(ATOMIC_SUPPORT_STUB) */
 	}
 
+	/**
+	 * Store unsigned 16 bit value at memory location as an atomic operation.
+	 * Compare the unsigned 16 bit value at memory location pointed to by <b>address</b>.  If it is
+	 * equal to <b>oldValue</b> then update this memory location with <b>newValue</b>
+	 * else retain the <b>oldValue</b>.
+	 *
+	 * @param address The memory location to be updated
+	 * @param oldValue The expected value at memory address
+	 * @param newValue The new value to be stored at memory address
+	 * @param readBeforeCAS Controls whether a pre-read occurs before the CAS attempt (default false)
+	 *
+	 * @return the value at memory location <b>address</b> BEFORE the store was attempted
+	 */
 	VMINLINE static uint16_t
 	lockCompareExchangeU16(volatile uint16_t *address, uint16_t oldValue, uint16_t newValue)
 	{
