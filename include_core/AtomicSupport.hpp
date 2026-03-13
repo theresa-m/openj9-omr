@@ -407,7 +407,7 @@ public:
 	 * @param address the memory location to be updated
 	 * @param oldValue the expected value at memory address
 	 * @param newValue the new value to be stored at memory address
-	 * @param readBeforeCAS tontrols whether a pre-read occurs before the CAS attempt (default false)
+	 * @param readBeforeCAS controls whether a pre-read occurs before the CAS attempt (default false)
 	 *
 	 * @return the value at memory location <b>address</b> BEFORE the store was attempted
 	 */
